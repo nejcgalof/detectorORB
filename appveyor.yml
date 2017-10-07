@@ -25,7 +25,7 @@ build:
   project: C:\projects\build\detectorORB.sln
 
 after_build: # We're still in %home%\build
-  - cmd: '%cmake% --build build --target INSTALL --config Release'
+  - cmd: '%cmake% --build ./detectorORB.sln --target INSTALL --config Release'
 
 configuration:
   - Release
