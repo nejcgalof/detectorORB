@@ -18,7 +18,7 @@ install:
 before_build: # We're still in %home%
   - cmd: mkdir build
   - cmd: cd build
-  - cmd: '%cmake% -G "Visual Studio 14 2015 Win64" -DOpenCV_DIR="C:/opencv/build" ..
+  - cmd: '%cmake% -G "Visual Studio 14 2015 Win64" -DOpenCV_DIR="C:/opencv/build" ..'
 
 build:
   project: C:\projects\build\detectorORB.sln
