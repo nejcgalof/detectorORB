@@ -16,6 +16,7 @@ install:
   - cmd: 7z x opencv-2.4.12-github-vc14-release-travis.rar -o"C:\projects" -y > nul
 
 before_build: # We're still in %home%
+  - cmd: cd %home%
   - cmd: mkdir build
   - cmd: cd build
   - cmd: '%cmake% -G "Visual Studio 14 Win64" -DOpenCV_DIR=C:\projects\opencv -DCMAKE_INSTALL_PREFIX=..\install ..'
