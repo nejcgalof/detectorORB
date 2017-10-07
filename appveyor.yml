@@ -19,7 +19,7 @@ before_build: # We're still in %home%
   - cmd: cd %home%
   - cmd: mkdir build
   - cmd: cd build
-  - cmd: '%cmake% -G "Visual Studio 14 Win64" -DOpenCV_DIR=C:\projects\opencv -DCMAKE_INSTALL_PREFIX=..\install ..'
+  - cmd: '%cmake% -G "Visual Studio 14 Win64" -DOpenCV_DIR=C:\projects\opencv -DCMAKE_INSTALL_PREFIX=..\install ..\detectorORB'
 
 build:
   project: C:\projects\build\detectorORB.sln
