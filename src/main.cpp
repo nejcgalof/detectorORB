@@ -1,7 +1,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <opencv2/opencv.hpp>
-#include <test.hpp>
+#include <build_panorama.hpp>
 
 using namespace cv;
 using namespace std;
@@ -9,6 +9,7 @@ using namespace std;
 int main(int argc, char** argv )
 {
 	Mat result;
+	Mat mask;
 	for (int i = 2; i < argc; i++) {
 		if(i==2){
 			result = imread(argv[i - 1]);
@@ -20,7 +21,8 @@ int main(int argc, char** argv )
 			cout << "error reading images " << endl;
 			return -1;
 		}
-		result = panorama(result, image).clone();
+		//result = panorama(result, image, mask).clone();
+		result = panorama_old(result, image).clone();
 	}
 	imwrite("result.jpg", result);
 	return 0;
