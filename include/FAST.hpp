@@ -32,8 +32,25 @@ int compare_pixels(int middle_pixel, int neighbour_pixel, int threshold) {
 	}
 }
 
+bool high_speed_test(Mat img, vector<int> intensity, int threshold) {
+	int middle_pixel = img.at<uchar>(Point(3, 3));
+	intensity.push_back(compare_pixels(middle_pixel, img.at<uchar>(Point(3, 0)), threshold)); // 1
+	intensity.push_back(compare_pixels(middle_pixel, img.at<uchar>(Point(6, 3)), threshold)); // 5
+	intensity.push_back(compare_pixels(middle_pixel, img.at<uchar>(Point(3, 6)), threshold)); // 9
+	intensity.push_back(compare_pixels(middle_pixel, img.at<uchar>(Point(0, 3)), threshold)); // 13
+	if (std::count(intensity.begin(), intensity.end(), 1) >= 3 || std::count(intensity.begin(), intensity.end(), -1) >= 3) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
 void fill_vector_intensity(Mat img, vector<int>& intensity, int threshold) {
 	intensity.clear();
+	if (high_speed_test(img, intensity, threshold) == false) {
+		return;
+	}
 	int middle_pixel = img.at<uchar>(Point(3, 3));
 	// 16 pixels around the pixel under test
 	intensity.push_back(compare_pixels(middle_pixel, img.at<uchar>(Point(2, 0)), threshold));
