@@ -73,6 +73,65 @@ void fill_vector_intensity(Mat img, vector<int>& intensity, int threshold) {
 	intensity.insert(intensity.end(), intensity.begin(), intensity.end());
 }
 
+int score_function(cv::Mat img, cv::Point middle) {
+	int sum = 0;
+	sum += abs(img.at<uchar>(Point(middle.x, middle.y - 3)) - img.at<uchar>(middle));
+	sum += abs(img.at<uchar>(Point(middle.x + 1, middle.y - 3)) - img.at<uchar>(middle));
+	sum += abs(img.at<uchar>(Point(middle.x + 2, middle.y - 2)) - img.at<uchar>(middle));
+	sum += abs(img.at<uchar>(Point(middle.x + 3, middle.y - 1)) - img.at<uchar>(middle));
+	sum += abs(img.at<uchar>(Point(middle.x + 3, middle.y)) - img.at<uchar>(middle));
+	sum += abs(img.at<uchar>(Point(middle.x + 3, middle.y + 1)) - img.at<uchar>(middle));
+	sum += abs(img.at<uchar>(Point(middle.x + 2, middle.y + 2)) - img.at<uchar>(middle));
+	sum += abs(img.at<uchar>(Point(middle.x + 1, middle.y + 3)) - img.at<uchar>(middle));
+	sum += abs(img.at<uchar>(Point(middle.x, middle.y + 3)) - img.at<uchar>(middle));
+	sum += abs(img.at<uchar>(Point(middle.x - 1, middle.y + 3)) - img.at<uchar>(middle));
+	sum += abs(img.at<uchar>(Point(middle.x - 2, middle.y + 2)) - img.at<uchar>(middle));
+	sum += abs(img.at<uchar>(Point(middle.x - 3, middle.y + 1)) - img.at<uchar>(middle));
+	sum += abs(img.at<uchar>(Point(middle.x - 3, middle.y)) - img.at<uchar>(middle));
+	sum += abs(img.at<uchar>(Point(middle.x - 3, middle.y - 1)) - img.at<uchar>(middle));
+	sum += abs(img.at<uchar>(Point(middle.x - 2, middle.y - 2)) - img.at<uchar>(middle));
+	sum += abs(img.at<uchar>(Point(middle.x - 1, middle.y - 3)) - img.at<uchar>(middle));
+	return sum;
+}
+
+void non_maximal_suppresion(cv::Mat img, std::vector<Point>& points) {
+	for (int i = 0; i < points.size(); i++) {
+		std::vector<Point>::iterator it = std::find_if(points.begin(), points.end(), [&](const Point& p)
+		{
+			// search adjacent keypoint
+			return 
+				(points.at(i).x == p.x && points.at(i).y-3 == p.y) ||
+				(points.at(i).x+1 == p.x && points.at(i).y - 3 == p.y) ||
+				(points.at(i).x+2 == p.x && points.at(i).y - 2 == p.y) ||
+				(points.at(i).x+3 == p.x && points.at(i).y - 1 == p.y) ||
+				(points.at(i).x+3 == p.x && points.at(i).y == p.y) ||
+				(points.at(i).x+3 == p.x && points.at(i).y + 1 == p.y) ||
+				(points.at(i).x+2 == p.x && points.at(i).y + 2 == p.y) ||
+				(points.at(i).x+1 == p.x && points.at(i).y + 3 == p.y) ||
+				(points.at(i).x == p.x && points.at(i).y + 3 == p.y) ||
+				(points.at(i).x-1 == p.x && points.at(i).y + 3 == p.y) ||
+				(points.at(i).x-2 == p.x && points.at(i).y + 2 == p.y) ||
+				(points.at(i).x-3 == p.x && points.at(i).y + 1 == p.y) ||
+				(points.at(i).x-3 == p.x && points.at(i).y  == p.y) ||
+				(points.at(i).x-3 == p.x && points.at(i).y + 1 == p.y) ||
+				(points.at(i).x-2 == p.x && points.at(i).y + 2 == p.y) ||
+				(points.at(i).x-1 == p.x && points.at(i).y + 3 == p.y)
+			;
+		});
+		if (it != points.end()) {
+			// Consider two adjacent keypoints and compute their V values V = score_function
+			// Discard the one with lower V value
+			if (score_function(img, points.at(i)) < score_function(img, Point(it->x, it->y))) {
+				points.erase(points.begin()+i);
+			}
+			else {
+				points.erase(it);
+			}
+			i -= 1;
+		}
+	}
+}
+
 void FAST(cv::Mat img, std::vector<Point>& points, int threshold = 0, bool nonmax_suppresion = false) {
 	points.clear();
 	threshold = std::min(std::max(threshold, 0), 255);
@@ -85,6 +144,9 @@ void FAST(cv::Mat img, std::vector<Point>& points, int threshold = 0, bool nonma
 				points.push_back(Point(i, j));
 			}
 		}
+	}
+	if (nonmax_suppresion) {
+		non_maximal_suppresion(img, points);
 	}
 }
 
