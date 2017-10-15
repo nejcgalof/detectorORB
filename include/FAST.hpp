@@ -154,7 +154,17 @@ void drawPoints(cv::Mat& img, std::vector<Point> points) {
 	for (int k = 0; k < points.size(); k++) {
 		cv::circle(img, points.at(k), 2, Scalar(255, 0, 0), CV_FILLED);
 	}
-	imshow("FAST points", img);
-	waitKey(30);
-	std::cin.get();
+}
+
+std::vector<std::tuple<Mat, std::vector<Point>, int >> FAST_multisized(cv::Mat img, std::vector<Point>& points, int threshold = 0, bool nonmax_suppresion = false, int num_img = 4) {
+	std::vector<std::tuple<Mat, std::vector<Point>, int >> infos;
+	FAST(img, points, threshold, nonmax_suppresion);
+	infos.push_back(std::make_tuple(img, points, 1));
+	std::make_tuple(img, points, 1);
+	for (int i = 2; i <= num_img; i++) {
+		pyrDown(img, img, Size(img.size().width / 2, img.size().height / 2));
+		FAST(img, points, threshold, nonmax_suppresion);
+		infos.push_back(std::make_tuple(img, points, i));
+	}
+	return infos;
 }

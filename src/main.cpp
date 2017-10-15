@@ -11,9 +11,12 @@ int main(int argc, char** argv )
 {
 	Mat image = imread("./debug/2.jpg");
 	vector<Point> points;
+	vector<Point> points1;
 	if (argc < 2) {
 		cout << "HELP/n";
-		FAST(image, points, 0, false);
+		FAST(image, points1, 50, true);
+		std::vector<std::tuple<Mat, std::vector<Point>, int >> infos = FAST_multisized(image, points, 50, true, 4);
+		return 0;
 	}
 	else {
 		image = imread(argv[1]);
