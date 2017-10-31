@@ -13,10 +13,11 @@ int main(int argc, char** argv )
 	Mat image = imread("./debug/2.jpg");
 	vector<Point> points;
 	vector<Point> points1;
+	vector<vector<int>> features1;
 	if (argc < 2) {
 		cout << "HELP/n";
 		FAST(image, points1, 100, true);
-		brief(image.clone(), points1);
+		brief(image.clone(), points1, features1);
 		/*std::vector<std::tuple<Mat, std::vector<Point>, int >> infos = FAST_multisized(image, points, 50, true, 4);
 		for (int i = 0; i < 4; i++) {
 			drawPoints(std::get<0>(infos[i]), std::get<1>(infos[i]));
