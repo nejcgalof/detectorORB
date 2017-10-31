@@ -3,6 +3,7 @@
 #include <opencv2/opencv.hpp>
 #include <build_panorama.hpp>
 #include <FAST.hpp>
+#include <BRIEF.hpp>
 
 using namespace cv;
 using namespace std;
@@ -15,11 +16,12 @@ int main(int argc, char** argv )
 	if (argc < 2) {
 		cout << "HELP/n";
 		FAST(image, points1, 100, true);
-		std::vector<std::tuple<Mat, std::vector<Point>, int >> infos = FAST_multisized(image, points, 50, true, 4);
+		brief(image.clone(), points1);
+		/*std::vector<std::tuple<Mat, std::vector<Point>, int >> infos = FAST_multisized(image, points, 50, true, 4);
 		for (int i = 0; i < 4; i++) {
 			drawPoints(std::get<0>(infos[i]), std::get<1>(infos[i]));
 			imwrite("FAST"+to_string(i)+".jpg", std::get<0>(infos[i]));
-		}
+		}*/
 		return 0;
 	}
 	else {
