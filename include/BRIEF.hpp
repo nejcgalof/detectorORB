@@ -30,6 +30,7 @@ void generate_pairs(vector<std::pair<cv::Point, cv::Point>> &pairs) {
 
 vector<int> create_binary_vector(cv::Mat image_roi, vector<std::pair<cv::Point, cv::Point>> pairs) {
 	vector<int> binary_vector;
+	binary_vector.clear();
 	for (int i = 0; i < pairs.size(); i++) {
 		if (image_roi.at<uchar>(pairs.at(i).first) > image_roi.at<uchar>(pairs.at(i).second)) {
 			binary_vector.push_back(1);
@@ -42,7 +43,7 @@ vector<int> create_binary_vector(cv::Mat image_roi, vector<std::pair<cv::Point, 
 }
 
 void brief(cv::Mat image, vector<Point> points, vector<vector<int>> &features) {
-	cv::cvtColor(image, image, CV_BGR2GRAY);
+	//cv::cvtColor(image, image, CV_BGR2GRAY);
 	copyMakeBorder(image, image, 15, 15, 15, 15, cv::BORDER_REFLECT101);
 	GaussianBlur(image, image, cv::Size(5, 5), 0);
 	vector<std::pair<cv::Point,cv::Point>> pairs;
