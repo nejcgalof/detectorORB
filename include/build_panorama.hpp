@@ -200,4 +200,21 @@ Mat panorama_old(Mat src1, Mat src2)
 	src2.copyTo(half);
 	return result;
 }
-
+			
+void my_panorama(Mat src1, Mat src2, vector<int> matcher, vector<Point> points1, vector<Point> points2) {
+	std::vector<Point2f> obj;
+	std::vector<Point2f> scene;
+	for (int i = 0; i < matcher.size(); i++) {
+		obj.push_back(Point2f(points1.at(i).x, points1.at(i).y));
+		scene.push_back(Point2f(points2.at(matcher.at(i)).x, points2.at(matcher.at(i)).y));
+	}
+	// Find the Homography Matrix
+	Mat H = findHomography(scene, obj, CV_RANSAC);
+	std::cout << H << std::endl;
+	// Use the Homography Matrix to warp the images
+	cv::Mat result;
+	warpPerspective(src1, result, H, cv::Size(src1.cols + src2.cols, src1.rows));
+	cv::Mat half(result, cv::Rect(0, 0, src2.cols, src2.rows));
+	src2.copyTo(half);
+	imwrite("PANORAMA.jpg", result);
+}
