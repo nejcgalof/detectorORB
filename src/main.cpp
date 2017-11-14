@@ -4,6 +4,7 @@
 #include <build_panorama.hpp>
 #include <FAST.hpp>
 #include <BRIEF.hpp>
+#include <matching.hpp>
 
 using namespace cv;
 using namespace std;
@@ -18,22 +19,25 @@ int main(int argc, char** argv )
 	Mat image2_org = image2.clone();
 	cv::cvtColor(image, image, CV_BGR2GRAY);
 	cv::cvtColor(image2, image2, CV_BGR2GRAY);
-	vector<Point> points;
 	vector<Point> points1;
 	vector<Point> points2;
 	vector<vector<int>> features1;
 	vector<vector<int>> features2;
 	if (argc < 3) {
-		Mat result;
-		Mat mask;
-		Mat a = panorama(image, image2, mask).clone();
-		cout << "HELP123/n";
+		//Mat result;
+		//Mat mask;
+		//Mat a = panorama(image, image2, mask).clone();
+		cout << "Generate pairs"<<endl;
 		vector<std::pair<cv::Point, cv::Point>> pairs;
 		generate_pairs(pairs);
+		cout << "FAST for first image" << endl;
 		FAST(image.clone(), points1, 45, true);
+		cout << "BRIEF for first image" << endl;
 		brief(image.clone(), points1, features1, pairs);
 
+		cout << "FAST for second image" << endl;
 		FAST(image2.clone(), points2, 45, true);
+		cout << "BRIEF for second image" << endl;
 		brief(image2.clone(), points2, features2, pairs);
 		/*std::vector<std::tuple<Mat, std::vector<Point>, int >> infos = FAST_multisized(image, points, 20, true, 4);
 		for (int i = 0; i < 4; i++) {
@@ -41,37 +45,19 @@ int main(int argc, char** argv )
 			imwrite("FAST"+to_string(i)+".jpg", std::get<0>(infos[i]));
 		}*/
 		vector<int> matcher;
-		cout << "matching";
-		matching(features1, features2, matcher);
+		cout << "Matching"<<endl;
+		matching(features1, features2, matcher, 10);
+
+		cout << "Drawing" << endl;
 		draw_matches(image1_org, image2_org, points1, points2, matcher);
 		drawPoints(image1_org, points1);
 		imwrite("img1.jpg", image1_org);
 		drawPoints(image2_org, points2);
 		imwrite("img2.jpg", image2_org);
-		cout << "end of draw";
 		return 0;
 	}
 	else {
-		Mat result;
-		Mat mask;
-		Mat a = panorama(image, image2, mask).clone();
-		cout << "HELP/n";
-		vector<std::pair<cv::Point, cv::Point>> pairs;
-		generate_pairs(pairs);
-		FAST(image.clone(), points1, 70, true);
-		brief(image.clone(), points1, features1, pairs);
-
-		FAST(image2.clone(), points2, 70, true);
-		brief(image2.clone(), points2, features2, pairs);
-		/*std::vector<std::tuple<Mat, std::vector<Point>, int >> infos = FAST_multisized(image, points, 20, true, 4);
-		for (int i = 0; i < 4; i++) {
-		drawPoints(std::get<0>(infos[i]), std::get<1>(infos[i]));
-		imwrite("FAST"+to_string(i)+".jpg", std::get<0>(infos[i]));
-		}*/
-		vector<int> matcher;
-		matching(features1, features2, matcher);
-		image = imread(argv[1]);
-		FAST(image, points, atoi(argv[2]), atoi(argv[3]));
+		cout << "Problem" << endl;
 	}
 	return 0;
 	/*Mat result;

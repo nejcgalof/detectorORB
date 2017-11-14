@@ -21,15 +21,9 @@ void generate_pairs(vector<std::pair<cv::Point, cv::Point>> &pairs) {
 			i--;
 		}
 	}
-	Mat image(31, 31, CV_8UC3, Scalar(0, 0, 0));
-	for (int i = 0; i < 256; i++) {
-		cv::line(image, pairs.at(i).first, pairs.at(i).second, cv::Scalar(255,255,255));		
-	}
-	imwrite("pairs.jpg", image);
 }	
 
 vector<int> create_binary_vector(cv::Mat image_roi, vector<std::pair<cv::Point, cv::Point>> pairs) {
-	//std::cout << image_roi << std::endl;
 	vector<int> binary_vector;
 	binary_vector.clear();
 	for (int i = 0; i < pairs.size(); i++) {
@@ -44,7 +38,6 @@ vector<int> create_binary_vector(cv::Mat image_roi, vector<std::pair<cv::Point, 
 }
 
 void brief(cv::Mat image, vector<Point> points, vector<vector<int>> &features, vector<std::pair<cv::Point, cv::Point>> pairs) {
-	//cv::cvtColor(image, image, CV_BGR2GRAY);
 	copyMakeBorder(image, image, 15, 15, 15, 15, cv::BORDER_REFLECT101);
 	GaussianBlur(image, image, cv::Size(5, 5), 0);
 	for (int k = 0; k < points.size(); k++) {
@@ -52,5 +45,4 @@ void brief(cv::Mat image, vector<Point> points, vector<vector<int>> &features, v
 		cv::Mat image_roi = image(roi);
 		features.push_back(create_binary_vector(image_roi,pairs));
 	}
-	imwrite("after_brief.jpg", image);
 }
