@@ -152,7 +152,7 @@ void FAST(cv::Mat img, std::vector<Point>& points, int threshold = 0, bool nonma
 
 void drawPoints(cv::Mat& img, std::vector<Point> points) {
 	for (int k = 0; k < points.size(); k++) {
-		cv::circle(img, points.at(k), 2, Scalar(255, 0, 0), CV_FILLED);
+		cv::circle(img, points.at(k), 3, Scalar(255, 0, 0), CV_FILLED);
 	}
 }
 

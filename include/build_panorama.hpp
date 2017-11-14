@@ -55,7 +55,8 @@ Mat panorama(Mat src1, Mat src2, Mat& mask)
 
 	Mat img_matches;
 	drawMatches(src1, keyPoints_obj, src2, keyPoints_scene, matches, img_matches);
-	imwrite("matches.jpg", img_matches);
+	imwrite("matchesOPENCV.jpg", img_matches);
+	return img_matches;
 	// Find the Homography Matrix
 	Mat H = findHomography(obj, scene, CV_RANSAC);
 
@@ -203,6 +204,7 @@ Mat panorama_old(Mat src1, Mat src2)
 
 int hamming_distance(vector<int> first, vector<int> second) {
 	vector<int> result;
+	result.clear();
 	for (int i = 0; i < 256; i++) {
 		if (first.at(i) == second.at(i)) {
 			result.push_back(0);
@@ -215,6 +217,7 @@ int hamming_distance(vector<int> first, vector<int> second) {
 	for (std::vector<int>::iterator it = result.begin(); it != result.end(); ++it){
 		hamming_dist += *it;
 	}
+	//std::cout << hamming_dist << std::endl;
 	return hamming_dist;
 }
 
@@ -247,7 +250,7 @@ void draw_matches(Mat image, Mat image2, vector<Point> points1, vector<Point> po
 		if (matcher.at(i) == -1) {
 			continue;
 		}
-		cv::line(newImage, points1.at(i), Point(image.size().width+points2.at(matcher.at(i)).x, points2.at(matcher.at(i)).y), cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255)),2, CV_AA);
+		cv::line(newImage, points1.at(i), Point(image.size().width+points2.at(matcher.at(i)).x, points2.at(matcher.at(i)).y), cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255)), 2, CV_AA);
 	}
 	imwrite("matches.jpg", newImage);
 }
