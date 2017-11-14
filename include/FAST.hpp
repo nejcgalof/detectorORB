@@ -135,7 +135,7 @@ void non_maximal_suppresion(cv::Mat img, std::vector<Point>& points) {
 void FAST(cv::Mat img, std::vector<Point>& points, int threshold = 0, bool nonmax_suppresion = false) {
 	points.clear();
 	threshold = std::min(std::max(threshold, 0), 255);
-	cv::cvtColor(img, img, CV_BGR2GRAY);
+	//cv::cvtColor(img, img, CV_BGR2GRAY);
 	vector<int> intensity;
 	for (int i = 3; i < img.cols - 3; i++) {
 		for (int j = 3; j < img.rows - 3; j++) {
@@ -152,7 +152,7 @@ void FAST(cv::Mat img, std::vector<Point>& points, int threshold = 0, bool nonma
 
 void drawPoints(cv::Mat& img, std::vector<Point> points) {
 	for (int k = 0; k < points.size(); k++) {
-		cv::circle(img, points.at(k), 2, Scalar(255, 0, 0), CV_FILLED);
+		cv::circle(img, points.at(k), 3, Scalar(255, 0, 0), CV_FILLED);
 	}
 }
 

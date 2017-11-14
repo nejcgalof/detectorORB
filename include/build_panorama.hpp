@@ -55,7 +55,8 @@ Mat panorama(Mat src1, Mat src2, Mat& mask)
 
 	Mat img_matches;
 	drawMatches(src1, keyPoints_obj, src2, keyPoints_scene, matches, img_matches);
-	imwrite("matches.jpg", img_matches);
+	imwrite("matchesOPENCV.jpg", img_matches);
+	return img_matches;
 	// Find the Homography Matrix
 	Mat H = findHomography(obj, scene, CV_RANSAC);
 
@@ -199,3 +200,4 @@ Mat panorama_old(Mat src1, Mat src2)
 	src2.copyTo(half);
 	return result;
 }
+
