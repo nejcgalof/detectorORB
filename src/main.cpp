@@ -11,8 +11,8 @@ using namespace std;
 
 int main(int argc, char** argv )
 {
-	Mat image = imread("../panorama_slike/panorama2/DSC_0108.jpg");
-	Mat image2 = imread("../panorama_slike/panorama2/DSC_0109.jpg");
+	Mat image = imread("../panorama_slike/panorama2/DSC_0109.jpg");
+	Mat image2 = imread("../panorama_slike/panorama2/DSC_0110.jpg");
 	cv::resize(image, image, cv::Size(), 0.25, 0.25);
 	cv::resize(image2, image2, cv::Size(), 0.25, 0.25);
 	Mat image1_org = image.clone();
@@ -52,8 +52,7 @@ int main(int argc, char** argv )
 		cout << points1.size()<<endl;
 		cout << points2.size()<<endl;
 		cout << "Panorama" << endl;
-		my_panorama(image2, image, matcher, points1, points2);
-		imwrite("PANORAMA_DEF.jpg", panorama_old(image2, image));
+		panorama(image2, image, matcher, points1, points2);
 
 		cout << "Drawing" << endl;
 		draw_matches(image1_org, image2_org, points1, points2, matcher);
