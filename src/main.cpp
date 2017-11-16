@@ -52,7 +52,7 @@ int main(int argc, char** argv )
 		cout << points1.size()<<endl;
 		cout << points2.size()<<endl;
 		cout << "Panorama" << endl;
-		panorama(image2, image, matcher, points1, points2);
+		cv::Mat pan1 = panorama(image2, image, matcher, points1, points2);
 
 		cout << "Drawing" << endl;
 		draw_matches(image1_org, image2_org, points1, points2, matcher);

@@ -8,7 +8,7 @@
 #include <vector>
 using namespace cv;
 			
-void panorama(Mat src1, Mat src2, vector<int> matcher, vector<Point> points1, vector<Point> points2) {
+cv::Mat panorama(Mat src1, Mat src2, vector<int> matcher, vector<Point> points1, vector<Point> points2) {
 	std::vector<Point2f> obj;
 	std::vector<Point2f> scene;
 	for (int i = 0; i < matcher.size(); i++) {
@@ -54,48 +54,42 @@ void panorama(Mat src1, Mat src2, vector<int> matcher, vector<Point> points1, ve
 
 	cv::Mat panorama(size_warp, CV_8UC3);
 	warpPerspective(src1, panorama, H2*H, size_warp);
+	cv::Mat dva = panorama.clone();
+	cv::imwrite("dva.jpg", dva);
 
 	//ROI for img1
 	cv::Rect img1_rect(offsetX, offsetY, src2.cols, src2.rows);
-	cv::Mat half;
+
+	cv::Mat panorama1(size_warp, CV_8UC1);
+	//cv::Mat half1 = cv::Mat(panorama1, img1_rect);
+	src2.copyTo(panorama1(img1_rect));
+	cv::Mat ena = panorama1.clone();
+	cv::imwrite("ena.jpg", panorama1);
 	cv::Mat mask;
-	//First iteration
-	if (mask.empty()) {
-		//Copy img1 in the panorama using the ROI
-		cv::Mat half = cv::Mat(panorama, img1_rect);
-		src2.copyTo(half);
+	cv::Mat mask2;
+	cv::Mat mask3;
+	//Copy img1 in the panorama using the ROI
+	cv::Mat half = cv::Mat(panorama, img1_rect);
+	src2.copyTo(half);
 
-		//Create the new mask matrix for the panorama
-		mask = cv::Mat::ones(src1.size(), CV_8U) * 255;
-		cv::warpPerspective(mask, mask, H2*H, size_warp);
-		cv::rectangle(mask, img1_rect, cv::Scalar(255), -1);
-		std::cout << "1" << std::endl;
-	}
-	else {
-		//NOT FIX YET
-		//Create an image with the final size to paste img1
-		cv::Mat maskTmp = cv::Mat::zeros(size_warp, src1.type());
-		half = cv::Mat(maskTmp, img1_rect);
-		src1.copyTo(half);
+	//Create the new mask matrix for the panorama
+	mask = cv::Mat::ones(src1.size(), CV_8U) * 255;
+	cv::warpPerspective(mask, mask, H2*H, size_warp);
+	cv::imwrite("mask1.jpg", mask);
 
-		//Copy img1 into panorama using a mask
-		cv::Mat maskTmp2 = cv::Mat::zeros(size_warp, CV_8U);
-		half = cv::Mat(maskTmp2, img1_rect);
-		mask.copyTo(half);
-		maskTmp.copyTo(panorama, maskTmp2);
+	mask2 = cv::Mat::zeros(size_warp, CV_8U);
+	mask2(img1_rect) = cv::Scalar(255);
+	cv::imwrite("mask2.jpg", mask2);
 
-		//Create a mask for the warped part
-		maskTmp = cv::Mat::ones(src2.size(), CV_8U) * 255;
-		cv::warpPerspective(maskTmp, maskTmp, H2*H, size_warp);
+	cv::bitwise_and(mask, mask2, mask3);
+	cv::imwrite("mask3.jpg", mask3);
 
-		maskTmp2 = cv::Mat::zeros(size_warp, CV_8U);
-		half = cv::Mat(maskTmp2, img1_rect);
-		//Copy the old mask in maskTmp2
-		mask.copyTo(half);
-		//Merge the old mask with the new one
-		maskTmp += maskTmp2;
-		maskTmp.copyTo(mask);
-		std::cout << "2" << std::endl;
-	}
-	cv::imwrite("PANORAMA.jpg", panorama);
+	Mat acc(panorama.size(), CV_64F, Scalar(0));
+	accumulate(ena, acc);
+	accumulate(dva, acc);
+	Mat avg;
+	acc.convertTo(avg, CV_8U, 1.0 / 2);
+	avg.copyTo(panorama, mask3);
+	cv::imwrite("panorama.jpg", panorama);
+	return panorama;
 }
