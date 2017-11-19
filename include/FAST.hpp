@@ -100,7 +100,7 @@ void non_maximal_suppresion(cv::Mat img, std::vector<Point>& points) {
 		{
 			// search adjacent keypoint
 			return 
-				(points.at(i).x == p.x && points.at(i).y-3 == p.y) ||
+				/*(points.at(i).x == p.x && points.at(i).y-3 == p.y) ||
 				(points.at(i).x+1 == p.x && points.at(i).y - 3 == p.y) ||
 				(points.at(i).x+2 == p.x && points.at(i).y - 2 == p.y) ||
 				(points.at(i).x+3 == p.x && points.at(i).y - 1 == p.y) ||
@@ -115,7 +115,15 @@ void non_maximal_suppresion(cv::Mat img, std::vector<Point>& points) {
 				(points.at(i).x-3 == p.x && points.at(i).y  == p.y) ||
 				(points.at(i).x-3 == p.x && points.at(i).y + 1 == p.y) ||
 				(points.at(i).x-2 == p.x && points.at(i).y + 2 == p.y) ||
-				(points.at(i).x-1 == p.x && points.at(i).y + 3 == p.y)
+				(points.at(i).x-1 == p.x && points.at(i).y + 3 == p.y)*/
+				(points.at(i).x -1 == p.x && points.at(i).y - 1 == p.y) ||
+				(points.at(i).x == p.x && points.at(i).y - 1 == p.y) ||
+				(points.at(i).x + 1 == p.x && points.at(i).y - 1 == p.y) ||
+				(points.at(i).x - 1 == p.x && points.at(i).y == p.y) ||
+				(points.at(i).x + 1 == p.x && points.at(i).y == p.y) ||
+				(points.at(i).x - 1 == p.x && points.at(i).y + 1 == p.y) ||
+				(points.at(i).x == p.x && points.at(i).y + 1 == p.y) ||
+				(points.at(i).x + 1 == p.x && points.at(i).y + 1 == p.y)
 			;
 		});
 		if (it != points.end()) {
