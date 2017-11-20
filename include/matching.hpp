@@ -47,15 +47,22 @@ void matching(vector<vector<int>> features1, vector<vector<int>> features2, vect
 	}
 }
 
-void draw_matches(Mat image, Mat image2, vector<Point> points1, vector<Point> points2, vector<int> matcher) {
+cv::Mat draw_matches(Mat image, Mat image2, vector<Point> points1, vector<Point> points2, vector<int> matcher) {
 	RNG rng(12345);
 	Mat newImage;
-	hconcat(image, image2, newImage);
+	cv::Mat image_2 = image2.clone();
+	int top = (image.rows - image2.rows) / 2;
+	int left = (image.cols - image2.cols) / 2;
+	std::cout << top << std::endl;
+	copyMakeBorder(image_2, image_2, top, (image.rows-image2.rows)-top, left, (image.cols - image2.cols)-left, BORDER_CONSTANT);
+	std::cout << image.size() << std::endl;
+	std::cout << image_2.size() << std::endl;
+	hconcat(image, image_2, newImage);
 	for (int i = 0; i < matcher.size(); i++) {
 		if (matcher.at(i) == -1) {
 			continue;
 		}
-		cv::line(newImage, points1.at(i), Point(image.size().width + points2.at(matcher.at(i)).x, points2.at(matcher.at(i)).y), cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255)), 2, CV_AA);
+		cv::line(newImage, points1.at(i), Point(image.size().width + left + points2.at(matcher.at(i)).x, top+points2.at(matcher.at(i)).y), cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255)), 1, CV_AA);
 	}
-	imwrite("matches.jpg", newImage);
+	return newImage;
 }
