@@ -53,10 +53,7 @@ cv::Mat draw_matches(Mat image, Mat image2, vector<Point> points1, vector<Point>
 	cv::Mat image_2 = image2.clone();
 	int top = (image.rows - image2.rows) / 2;
 	int left = (image.cols - image2.cols) / 2;
-	std::cout << top << std::endl;
 	copyMakeBorder(image_2, image_2, top, (image.rows-image2.rows)-top, left, (image.cols - image2.cols)-left, BORDER_CONSTANT);
-	std::cout << image.size() << std::endl;
-	std::cout << image_2.size() << std::endl;
 	hconcat(image, image_2, newImage);
 	for (int i = 0; i < matcher.size(); i++) {
 		if (matcher.at(i) == -1) {
