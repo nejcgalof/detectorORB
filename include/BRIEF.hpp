@@ -37,12 +37,20 @@ vector<int> create_binary_vector(cv::Mat image_roi, vector<std::pair<cv::Point, 
 	return binary_vector;
 }
 
-void brief(cv::Mat image, vector<Point> points, vector<vector<int>> &features, vector<std::pair<cv::Point, cv::Point>> pairs) {
+void brief(cv::Mat image, vector<Point> &points, vector<vector<int>> &features, vector<std::pair<cv::Point, cv::Point>> pairs) {
 	copyMakeBorder(image, image, 15, 15, 15, 15, cv::BORDER_REFLECT101);
 	GaussianBlur(image, image, cv::Size(5, 5), 0);
 	for (int k = 0; k < points.size(); k++) {
-		cv::Rect roi(points.at(k).x, points.at(k).y, 31, 31);
-		cv::Mat image_roi = image(roi);
-		features.push_back(create_binary_vector(image_roi,pairs));
+		if (points.at(k).x < 0 || points.at(k).y < 0 || image.cols < points.at(k).x || image.rows < points.at(k).y) {
+			std::cout << "maybi kresne zdle" << std::endl;
+			points.erase(points.begin() + k);
+			k--;
+			continue;
+		}
+		else {
+			cv::Rect roi(points.at(k).x, points.at(k).y, 31, 31);
+			cv::Mat image_roi = image(roi);
+			features.push_back(create_binary_vector(image_roi, pairs));
+		}
 	}
 }
