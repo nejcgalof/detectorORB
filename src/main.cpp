@@ -52,6 +52,8 @@ int main(int argc, char** argv )
 			image2 = imread(argv[++i]);
 			cv::resize(image, image, cv::Size(), 0.25, 0.25);
 			cv::resize(image2, image2, cv::Size(), 0.25, 0.25);
+			cout << "FAST for first image" << endl;
+			FAST(image.clone(), points1, fast_threshold, non_max);
 		}
 		else {
 			CreateDirectory(("./process/" + to_string(i - 2)).c_str(), NULL);
@@ -60,19 +62,24 @@ int main(int argc, char** argv )
 			image2 = imread(argv[i], CV_LOAD_IMAGE_COLOR);
 			cv::resize(image2, image2, cv::Size(), 0.25, 0.25);
 
-			points1.clear();
+			//points1.clear();
 			features1.clear();
 			points2.clear();
 			features2.clear();
-
 		}
 		image1_org = image.clone();
 		image2_org = image2.clone();
 		cv::cvtColor(image2, image2, CV_BGR2GRAY);
 		cv::cvtColor(image, image, CV_BGR2GRAY);
 
-		cout << "FAST for first image" << endl;
-		FAST(image.clone(), points1, fast_threshold, non_max);
+		//cout << "FAST for first image" << endl;
+		//FAST(image.clone(), points1, fast_threshold, non_max);
+		for (int k = 0; k < points1.size(); k++) {
+			if (points1.at(k).x < 0 || points1.at(k).y < 0 || image.cols < points1.at(k).x || image.rows < points1.at(k).y) {
+				points1.erase(points1.begin() + k);
+				k--;
+			}
+		}
 		cout << "BRIEF for first image" << endl;
 		brief(image.clone(), points1, features1, pairs);
 
@@ -89,17 +96,18 @@ int main(int argc, char** argv )
 		cout << "Matching" << endl;
 		matching(features1, features2, matcher, INT_MAX);
 
-		cout << "Panorama" << endl;
-		panorama_image = panorama(image2_org, image1_org, matcher, points1, points2, mask_pano);
-
 		cout << "Drawing" << endl;
+		cv::imwrite("./process/" + to_string(i - 2) + "/matches.jpg", draw_matches(image1_org.clone(), image2_org.clone(), points1, points2, matcher).clone());
+		cv::Mat draw_points_image1 = image1_org.clone();
+		cv::Mat draw_points_image2 = image2_org.clone();
+		drawPoints(draw_points_image1, points1);
+		imwrite("./process/" + to_string(i - 2) + "/img1.jpg", draw_points_image1);
+		drawPoints(draw_points_image2, points2);
+		imwrite("./process/" + to_string(i - 2) + "/img2.jpg", draw_points_image2);
+		cout << "Panorama" << endl;
+		panorama_image = panorama(image2_org.clone(), image1_org.clone(), matcher, points1, points2, mask_pano);
+		cv::imwrite("./panoramas/panorama" + to_string(i - 2) + ".jpg", panorama_image.clone());
 		cv::imwrite("./process/" + to_string(i - 2) + "/mask.jpg", mask_pano);
-		cv::imwrite("./process/" + to_string(i - 2) + "/matches.jpg", draw_matches(image1_org, image2_org, points1, points2, matcher).clone());
-		drawPoints(image1_org, points1);
-		imwrite("./process/" + to_string(i - 2) + "/img1.jpg", image1_org);
-		drawPoints(image2_org, points2);
-		imwrite("./process/" + to_string(i - 2) + "/img2.jpg", image2_org);
-		cv::imwrite("./panoramas/panorama"+to_string(i-2)+".jpg", panorama_image);
 	}
 	return 0;
 }

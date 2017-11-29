@@ -8,14 +8,13 @@
 #include <vector>
 using namespace cv;
 			
-cv::Mat panorama(Mat src1, Mat src2, vector<int> matcher, vector<Point> points1, vector<Point> points2, cv::Mat& mask) {
+cv::Mat panorama(Mat src1, Mat src2, vector<int> matcher, vector<Point> &points1, vector<Point> points2, cv::Mat& mask) {
 	std::vector<Point2f> obj;
 	std::vector<Point2f> scene;
 	for (int i = 0; i < matcher.size(); i++) {
 		obj.push_back(Point2f(points1.at(i).x, points1.at(i).y));
 		scene.push_back(Point2f(points2.at(matcher.at(i)).x, points2.at(matcher.at(i)).y));
 	}
-
 	// Find the Homography Matrix
 	Mat H = findHomography(scene, obj, CV_RANSAC);
 	
@@ -54,6 +53,16 @@ cv::Mat panorama(Mat src1, Mat src2, vector<int> matcher, vector<Point> points1,
 
 	cv::Mat panorama(size_warp, CV_8UC3);
 	warpPerspective(src1, panorama, H2*H, size_warp);
+
+	points1.clear();
+	cv::perspectiveTransform(obj, obj, H2);
+	cv::perspectiveTransform(scene, scene, H2*H);
+	for (int i = 0; i < scene.size(); i++) {
+		points1.push_back(Point(scene.at(i).x, scene.at(i).y));
+	}
+	for (int i = 0; i < obj.size(); i++) {
+		points1.push_back(Point(obj.at(i).x, obj.at(i).y));
+	}
 	cv::Mat dva = panorama.clone();
 	cv::imwrite("dva.jpg", dva);
 
@@ -86,7 +95,6 @@ cv::Mat panorama(Mat src1, Mat src2, vector<int> matcher, vector<Point> points1,
 		cv::imwrite("mask3.jpg", mask3);
 
 		cv::bitwise_or(mask, mask2, mask);
-
 
 		//perspectiveTransform(points2, points2, H2);
 		//perspectiveTransform(points1, points1, H2);
