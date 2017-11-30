@@ -58,6 +58,7 @@ int main(int argc, char** argv )
 	if (camera) {
 		int i = 2;
 		cout << "n - next image; q - exit" << endl;
+		namedWindow("panorama", WINDOW_AUTOSIZE);
 		for (;;)
 		{
 			i++;
@@ -66,8 +67,8 @@ int main(int argc, char** argv )
 				CreateDirectory(("./process/" + to_string(i - 1)).c_str(), NULL);
 				cout << "1 and 2 image" << endl;
 				cout << "'n'- take a picture" << endl;
-				int k= getchar();
-				if (110 == k)
+				auto k = waitKey();
+				if ('n' == k)
 				{
 					cout << "taking a picture" << endl;
 					cap.read(image);
@@ -77,11 +78,8 @@ int main(int argc, char** argv )
 					return 1; 
 				}
 				cout << "'n'- take a picture" << endl;
-				int g = getchar();
-				if (g == 10) {
-					g = getchar();
-				}
-				if (110 == g)
+				auto g = waitKey();
+				if (g == 'n')
 				{
 					cout << "Taking a picture" << endl;
 					cap.read(image2);
@@ -98,11 +96,8 @@ int main(int argc, char** argv )
 				cout << "Add " << (i - 2) << " image" << endl;
 				image = panorama_image.clone();
 				cout << "'n'- take a picture" << endl;
-				int g = getchar();
-				if (g == 10) {
-					g = getchar();
-				}
-				if (110 == g)
+				auto g = waitKey();
+				if (g == 'n')
 				{
 					cout << "Taking a picture" << endl;
 					cap.read(image2);
@@ -151,6 +146,8 @@ int main(int argc, char** argv )
 			imwrite("./process/" + to_string(i - 2) + "/img2.jpg", draw_points_image2);
 			cout << "Panorama" << endl;
 			panorama_image = panorama(image2_org.clone(), image1_org.clone(), matcher, points1, points2, mask_pano);
+			imshow("panorama", panorama_image.clone());
+			waitKey(30);
 			cv::imwrite("./panoramas/panorama" + to_string(i - 1) + ".jpg", panorama_image.clone());
 			cv::imwrite("./process/" + to_string(i - 2) + "/mask.jpg", mask_pano);
 		}
