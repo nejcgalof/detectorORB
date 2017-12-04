@@ -74,3 +74,8 @@ Parameters in that order:
 
 Without image paths you build panoramas with camera. Press `n` for taking next image.
 
+## Results
+
+![Alt text](results/example1.jpg?raw=true "Example 1")
+![Alt text](results/example2.jpg?raw=true "Example 2")
+![Alt text](results/camera_example.jpg?raw=true "Camera example 3")
